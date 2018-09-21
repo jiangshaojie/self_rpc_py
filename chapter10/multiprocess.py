@@ -32,7 +32,14 @@ def loop(sock,handlers):
         conn,addr=sock.accept()
         p=multiprocessing.Process(target=hannle_conn,args=(conn,addr,handlers))
         p.start()
-        p.sock.close()
+        if p.exitcode is None:
+            sock.close()
+            hannle_conn(conn, addr, handlers)
+            break
+        else:
+            conn.close()
+            continue
+        # p.sock.close()
         # hannle_conn(conn,addr,handlers)
 
 def ping(conn,params):
