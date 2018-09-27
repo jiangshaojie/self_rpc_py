@@ -18,7 +18,7 @@ def rpc(sock,in_,params):
 if __name__=="__main__":
     s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.connect(('127.0.0.1',8800))
-    for i in range(10):
+    for i in range(1000):
         out,result=rpc(s,"ping","ireader %d" % i)
         print(out,result)
         time.sleep(1)

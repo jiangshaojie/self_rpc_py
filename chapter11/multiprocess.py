@@ -26,14 +26,18 @@ def hannle_conn(conn,addr,handlers):
             # print(json.decoder.JSONDecodeError.msg)
             print("json解析失败")
             # pass
-        conn.close
+        # conn.close
 
 def loop(sock,handlers):
+    print("666666")
+    p=multiprocessing.Pool(4)
+    # for i in range(10):
+
+        # p.apply_async(func=loop,args=(sock,handlers))
     while True:
         conn,addr=sock.accept()
-        p=multiprocessing.Process(target=hannle_conn,args=(conn,addr,handlers))
-        p.start()
-        # p.sock.close()
+        p.apply_async(func=hannle_conn, args=(conn,addr, handlers))
+        # hannle_conn(conn,addr,handlers)
 
 def ping(conn,params):
     send_result(conn,"pong",params)
@@ -48,8 +52,16 @@ if __name__=='__main__':
     sock=socket.socket(socket.AF_INET,socket.SOCK_STREAM) #创建TCP套接字
     sock.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
     sock.bind(('127.0.0.1',8800))
+    pool=multiprocessing.Pool()
     sock.listen(1)
-    handlers={
-        "ping":ping
+    handlers = {
+        "ping": ping
     }
+
+    # for i in range(10):
+    #
+    #     pool.apply_async(func=loop,args=(sock,handlers))
+
+    # pool.join()
+
     loop(sock,handlers) #进入服务循环

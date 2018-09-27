@@ -21,26 +21,19 @@ def hannle_conn(conn,addr,handlers):
             print(in_, params)
             handler = handlers[in_]
             handler(conn, params)
+
         except json.decoder.JSONDecodeError as e:
             # print(json.decoder.JSONDecodeError.msg)
             print("json解析失败")
             # pass
-
+        conn.close
 
 def loop(sock,handlers):
     while True:
         conn,addr=sock.accept()
         p=multiprocessing.Process(target=hannle_conn,args=(conn,addr,handlers))
         p.start()
-        if p.exitcode is None:
-            sock.close()
-            hannle_conn(conn, addr, handlers)
-            break
-        else:
-            conn.close()
-            continue
         # p.sock.close()
-        # hannle_conn(conn,addr,handlers)
 
 def ping(conn,params):
     send_result(conn,"pong",params)
