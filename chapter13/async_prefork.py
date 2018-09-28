@@ -3,7 +3,7 @@ import struct
 import socket
 import asyncore
 from io import StringIO
-
+import multiprocessing
 class RPCHandler(asyncore.dispatcher_with_send):
 
     def __init__(self,sock,addr):
@@ -71,6 +71,15 @@ class RPCSERVER(asyncore.dispatcher):
         self.set_reuse_addr()
         self.bind((host,port))
         self.listen(1)
+        pool=multiprocessing.Pool(6)
+        for i in range(6):
+            pool.apply_async(func=self.handle_accept())
+            # p=multiprocessing.Process(target=self.handle_accept)
+        # pool.start()
+        # pool.join()
+        pool.close()
+        pool.join()
+            # p.apply_async(func=self.handle_accep)
     def handle_accept(self):
         pair=self.accept()
 

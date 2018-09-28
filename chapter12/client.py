@@ -15,19 +15,22 @@ def rpc(sock,in_,params):
     body=sock.recv(length)
     response=json.loads(body)
     return response["out"],response["result"]
-def clientrequest(s):
+def clientrequest(s,number):
 
     for i in range(10):
         out,result=rpc(s,"ping","ireader %d" % i)
-        print(out,result)
-        time.sleep(2)
+        # print(out,result)
+        print("childprocess %d" % number, out, result)
+        # time.sleep(1)
+    print("此childprocess %d 结束" % number)
 
 def sss(s):
-    pool = Pool(8)
+    pool = Pool(10)
     # for i in range(10):
-    for i in range(10):
-
-     p = pool.apply_async(func=clientrequest, args=(s,))
+    for i in range(100):
+        p = pool.apply_async(func=clientrequest, args=(s,i))
+    pool.close()
+    pool.join()
 if __name__=="__main__":
     s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
     s.connect(('127.0.0.1',8080))
